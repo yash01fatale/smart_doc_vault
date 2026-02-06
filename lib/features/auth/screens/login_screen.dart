@@ -1,65 +1,72 @@
 import 'package:flutter/material.dart';
 import 'signup_screen.dart';
+import 'onboarding_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(title: const Text("Login")),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 30),
-            const Text(
-              "Welcome Back 👋",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: "Email",
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
             ),
-            const SizedBox(height: 10),
-            const Text("Login to access your documents"),
+            const SizedBox(height: 16),
+
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: "Password",
+                prefixIcon: Icon(Icons.lock_outline),
+              ),
+            ),
 
             const SizedBox(height: 30),
 
-            TextField(
-              decoration: const InputDecoration(labelText: "Email"),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  // TODO: API login
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const OnboardingScreen(),
+                    ),
+                  );
+                },
+                child: const Text("Login"),
+              ),
             ),
-            const SizedBox(height: 15),
 
-            TextField(
-              obscureText: true,
-              decoration: const InputDecoration(labelText: "Password"),
-            ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 16),
 
-            ElevatedButton(
+            TextButton(
               onPressed: () {
-                // backend later
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SignupScreen(),
+                  ),
+                );
               },
-              child: const Text("Login"),
+              child: const Text("Create new account"),
             ),
-
-            const SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("Don’t have an account? "),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const SignupScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text("Sign Up"),
-                ),
-              ],
-            )
           ],
         ),
       ),
