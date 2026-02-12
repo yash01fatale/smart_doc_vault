@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
         data["role"],
       );
 
-      // ✅ Success message
+      // ✅ SUCCESS MESSAGE
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Login successful 🎉"),
@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Column(
         children: [
-          // 🔷 HEADER
+          // 🔷 HEADER (STARTUP FEEL)
           Container(
             height: 260,
             width: double.infinity,
@@ -94,7 +94,11 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
-                Icon(Icons.lock_outline, size: 64, color: Colors.white),
+                Icon(
+                  Icons.lock_outline,
+                  size: 64,
+                  color: Colors.white,
+                ),
                 SizedBox(height: 12),
                 Text(
                   "Smart Document Vault",
@@ -107,7 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: 6),
                 Text(
                   "Secure • Smart • Reliable",
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(
+                    color: Colors.white70,
+                  ),
                 ),
               ],
             ),
@@ -132,7 +138,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 8),
                     Text(
                       "Login to continue",
-                      style: TextStyle(color: Colors.grey.shade600),
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                      ),
                     ),
 
                     const SizedBox(height: 30),
@@ -141,11 +149,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
-                      validator: (v) {
-                        if (v == null || v.isEmpty) {
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
                           return "Email is required";
                         }
-                        if (!v.contains("@")) {
+                        if (!value.contains("@")) {
                           return "Enter a valid email";
                         }
                         return null;
@@ -162,8 +170,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: passwordController,
                       obscureText: obscurePassword,
-                      validator: (v) {
-                        if (v == null || v.length < 6) {
+                      validator: (value) {
+                        if (value == null || value.length < 6) {
                           return "Password must be at least 6 characters";
                         }
                         return null;
@@ -186,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    // ✅ FORGOT PASSWORD
+                    // ✅ FORGOT PASSWORD (CORRECT PLACE)
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(

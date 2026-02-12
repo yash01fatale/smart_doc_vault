@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import '../../../core/storage/local_storage.dart';
 import '../../../core/utils/role_controller.dart';
-import '../../../shared/widgets/main_navigation.dart';
-import 'onboarding_screen.dart';
-import 'role_selection_screen.dart';
+import '../../documents/screens/dashboard_screen.dart';
+import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,38 +15,41 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _checkAuth();
+  }
 
-    Future.delayed(const Duration(seconds: 2), () {
-      final roleController =
-          Provider.of<RoleController>(context, listen: false);
+  Future<void> _checkAuth() async {
+    await Future.delayed(const Duration(seconds: 2));
 
-      if (!roleController.hasRoleSelected) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const OnboardingScreen(),
+    final token = await LocalStorage.getToken();
+    final role = await LocalStorage.getRole();
+
+    if (token != null && role != null) {
+      // ✅ User already logged in
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DashboardScreen(
+            userRole: role == "business"
+                ? UserRole.business
+                : UserRole.personal,
           ),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                MainNavigation(userRole: roleController.role!),
-          ),
-        );
-      }
-    });
+        ),
+      );
+    } else {
+      // ❌ Not logged in
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text(
-          "Smart Document Vault",
-          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-        ),
+        child: CircularProgressIndicator(),
       ),
     );
   }
