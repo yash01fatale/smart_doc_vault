@@ -1,22 +1,29 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const connectDB = require("./config/db");
-
 const app = express();
-connectDB();
-dotenv.config();
-app.use(cors());
+
+// CORS FIX FOR FLUTTER WEB
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
 app.use(express.json());
 
+// ROUTES
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/documents", require("./routes/documentRoutes"));
 
-app.get("/", (req, res) => {
-  res.send("Smart Document Vault API Running");
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.log(err));
+
+const PORT = 8000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
-
-const PORT = process.env.PORT || 8000;
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on port ${PORT}`)
-);

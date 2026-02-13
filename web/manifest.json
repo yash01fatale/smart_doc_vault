@@ -1,7 +1,7 @@
 {
     "name": "smart_doc_vault",
     "short_name": "smart_doc_vault",
-    "start_url": ".",
+    "start_url": "http://localhost:8000",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",

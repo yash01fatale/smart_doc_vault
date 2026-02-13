@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "nodemailer": "^8.0.1"
+  },
+  "name": "smart_doc_vault",
+  "version": "1.0.0",
+  "description": "A new Flutter project.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    
+  "backend": "cd backend && npm start",
+  "frontend": "flutter run -d chrome",
+  "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+
+
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

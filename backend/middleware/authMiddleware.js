@@ -10,9 +10,10 @@ const protect = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = decoded.userId;
     next();
-  } catch (error) {
+  } catch (error) {s
     res.status(401).json({ message: "Invalid token" });
   }
 };
+module.exports = authMiddleware;
 
 module.exports = protect;

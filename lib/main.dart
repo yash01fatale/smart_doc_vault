@@ -6,6 +6,9 @@ import 'core/utils/theme_controller.dart';
 import 'core/utils/role_controller.dart';
 
 import 'features/auth/screens/splash_screen.dart';
+import 'features/auth/screens/onboarding_screen.dart';
+import 'features/auth/screens/role_selection_screen.dart';
+import 'features/auth/screens/login_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,26 +22,35 @@ class SmartDocVaultApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ThemeController>(
-          create: (_) => ThemeController(),
-        ),
-        ChangeNotifierProvider<RoleController>(
-          create: (_) => RoleController(),
-        ),
+        ChangeNotifierProvider(create: (_) => ThemeController()),
+        ChangeNotifierProvider(create: (_) => RoleController()),
       ],
-      child: Consumer2<ThemeController, RoleController>(
-        builder: (context, themeController, roleController, _) {
+      child: Consumer<ThemeController>(
+        builder: (context, themeController, _) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Smart Document Vault',
 
-            // 🎨 THEMING
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeController.themeMode,
 
-            // 🧭 SINGLE ENTRY POINT
-            home: const SplashScreen(),
+            // 🔥 IMPORTANT FOR WEB REFRESH
+            initialRoute: '/',
+
+            routes: {
+              '/': (context) => const SplashScreen(),
+              '/onboarding': (context) => const OnboardingScreen(),
+              '/role': (context) => const RoleSelectionScreen(),
+              '/login': (context) => const LoginScreen(),
+
+            },
+            // 🔥 This makes web refresh work properly
+            onUnknownRoute: (settings) {
+              return MaterialPageRoute(
+                builder: (_) => const SplashScreen(),
+              );
+            },
           );
         },
       ),

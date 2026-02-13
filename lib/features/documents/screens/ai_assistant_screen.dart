@@ -11,8 +11,10 @@ class AIAssistantScreen extends StatefulWidget {
 
 class _AIAssistantScreenState extends State<AIAssistantScreen> {
   final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   final List<Map<String, String>> messages = [];
+  bool isTyping = false;
 
   @override
   void initState() {
@@ -26,8 +28,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
         messages.add({
           "role": "ai",
           "text": role == UserRole.business
-              ? "👋 Hi! I’m your Business Compliance Assistant.\n\nI can help you with:\n• GST & license renewals\n• Compliance deadlines\n• Penalty risks"
-              : "👋 Hi! I’m your Personal Document Assistant.\n\nI can help you with:\n• Aadhaar, PAN, Passport\n• Expiry reminders\n• Renewal steps"
+              ? "👋 Welcome! I’m your Business Compliance AI.\n\nI help with:\n• GST & License renewals\n• Compliance alerts\n• Penalty prevention"
+              : "👋 Welcome! I’m your Personal Document AI.\n\nI help with:\n• Passport, Aadhaar, PAN\n• Expiry reminders\n• Renewal guidance"
         });
       });
     });
@@ -41,36 +43,40 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
 
     setState(() {
       messages.add({"role": "user", "text": text});
+      isTyping = true;
     });
 
     _controller.clear();
+    _scrollToBottom();
 
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
+        isTyping = false;
         messages.add({
           "role": "ai",
           "text": _getAIResponse(text, role),
         });
       });
+      _scrollToBottom();
     });
   }
 
   String _getAIResponse(String query, UserRole? role) {
     if (role == UserRole.business) {
-      return
-          "📊 Based on your business documents:\n\n"
-          "• GST Certificate expires soon\n"
-          "• Shop Act License is valid\n\n"
-          "⚠️ Delayed renewals may cause penalties.\n\n"
-          "Would you like step-by-step compliance guidance?";
+      return "📊 Analysis:\n\n• GST expiring soon\n• Shop Act valid\n\n⚠ Renew early to avoid penalties.\n\nNeed full compliance steps?";
     } else {
-      return
-          "📄 Based on your personal documents:\n\n"
-          "• Passport expires soon\n"
-          "• Aadhaar & PAN are valid\n\n"
-          "🕒 I recommend starting renewal early.\n\n"
-          "Would you like renewal steps?";
+      return "📄 Analysis:\n\n• Passport expiring soon\n• Aadhaar & PAN valid\n\n🕒 Start renewal process early.\n\nWant step-by-step guide?";
     }
+  }
+
+  void _scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 200), () {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
@@ -78,104 +84,172 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     final role = Provider.of<RoleController>(context).role;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FB),
+
+      // 🌈 Gradient AppBar
       appBar: AppBar(
-        title: Text(
-          role == UserRole.business
-              ? "Business AI Assistant"
-              : "Personal AI Assistant",
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)],
+            ),
+          ),
+        ),
+        title: Row(
+          children: [
+            const CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.smart_toy, color: Colors.deepPurple),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              role == UserRole.business
+                  ? "Business AI"
+                  : "Personal AI",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          ],
         ),
       ),
+
       body: Column(
         children: [
+
+          /// CHAT AREA
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(16),
-              itemCount: messages.length,
+              itemCount: messages.length + (isTyping ? 1 : 0),
               itemBuilder: (context, index) {
+
+                if (isTyping && index == messages.length) {
+                  return _typingIndicator();
+                }
+
                 final msg = messages[index];
                 final isUser = msg["role"] == "user";
 
-                return Align(
-                  alignment:
-                      isUser ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    padding: const EdgeInsets.all(14),
-                    constraints: BoxConstraints(
-                      maxWidth:
-                          MediaQuery.of(context).size.width * 0.75,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isUser
-                          ? Colors.indigo
-                          : Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      msg["text"]!,
-                      style: TextStyle(
-                        color: isUser
-                            ? Colors.white
-                            : Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.color,
-                      ),
-                    ),
-                  ),
-                );
+                return _chatBubble(msg["text"]!, isUser);
               },
             ),
           ),
 
-          // QUICK PROMPTS
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Wrap(
-              spacing: 8,
-              children: role == UserRole.business
-                  ? [
-                      _quickPrompt("Which compliance is expiring soon?"),
-                      _quickPrompt("GST renewal process"),
-                    ]
-                  : [
-                      _quickPrompt("Which documents expire soon?"),
-                      _quickPrompt("How to renew passport?"),
-                    ],
-            ),
-          ),
+          /// QUICK PROMPTS
+          _quickPromptSection(role),
 
-          const SizedBox(height: 10),
-
-          // INPUT
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: "Ask something...",
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () => _sendMessage(_controller.text),
-                ),
-              ],
-            ),
-          ),
+          /// INPUT BAR
+          _inputBar(),
         ],
       ),
     );
   }
 
-  Widget _quickPrompt(String text) {
-    return ActionChip(
-      label: Text(text),
-      onPressed: () => _sendMessage(text),
+  Widget _chatBubble(String text, bool isUser) {
+    return Align(
+      alignment:
+          isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.all(14),
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        decoration: BoxDecoration(
+          color: isUser ? const Color(0xFF4A00E0) : Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: isUser ? Colors.white : Colors.black87,
+            fontSize: 15,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _typingIndicator() {
+    return const Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Text("AI is typing..."),
+      ),
+    );
+  }
+
+  Widget _quickPromptSection(UserRole? role) {
+    final prompts = role == UserRole.business
+        ? [
+            "Which compliance expires soon?",
+            "GST renewal process"
+          ]
+        : [
+            "Which documents expire soon?",
+            "How to renew passport?"
+          ];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Wrap(
+        spacing: 8,
+        children:
+            prompts.map((text) => ActionChip(
+              backgroundColor: Colors.deepPurple.shade50,
+              label: Text(text),
+              onPressed: () => _sendMessage(text),
+            )).toList(),
+      ),
+    );
+  }
+
+  Widget _inputBar() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 10,
+            color: Colors.black12,
+          )
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: "Ask your AI assistant...",
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          CircleAvatar(
+            backgroundColor: const Color(0xFF4A00E0),
+            child: IconButton(
+              icon: const Icon(Icons.send, color: Colors.white),
+              onPressed: () => _sendMessage(_controller.text),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

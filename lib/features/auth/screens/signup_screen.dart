@@ -8,302 +8,456 @@ class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<SignupScreen> createState() =>
+      _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
-  final _formKey = GlobalKey<FormState>();
+class _SignupScreenState
+    extends State<SignupScreen> {
 
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final mobileController = TextEditingController();
-  final passwordController = TextEditingController();
+  final _formKey =
+      GlobalKey<FormState>();
 
-  final businessNameController = TextEditingController();
-  final businessTypeController = TextEditingController();
-  final gstController = TextEditingController();
+  final nameController =
+      TextEditingController();
+  final emailController =
+      TextEditingController();
+  final mobileController =
+      TextEditingController();
+  final passwordController =
+      TextEditingController();
 
-  SignupRole role = SignupRole.personal;
+  final businessNameController =
+      TextEditingController();
+  final businessTypeController =
+      TextEditingController();
+  final gstController =
+      TextEditingController();
+
+  SignupRole role =
+      SignupRole.personal;
+
   bool isLoading = false;
   bool obscurePassword = true;
 
   Future<void> _signup() async {
-    if (!_formKey.currentState!.validate()) return;
 
-    setState(() => isLoading = true);
+    if (!_formKey
+        .currentState!
+        .validate()) return;
+
+    setState(() =>
+        isLoading = true);
 
     try {
+
       await AuthService.signup(
-        fullName: nameController.text.trim(),
-        email: emailController.text.trim(),
-        mobile: mobileController.text.trim(),
-        password: passwordController.text,
-        role: role == SignupRole.business ? "business" : "personal",
-        businessInfo: role == SignupRole.business
-            ? {
-                "businessName": businessNameController.text.trim(),
-                "businessType": businessTypeController.text.trim(),
-                "gstNumber": gstController.text.trim(),
-              }
-            : null,
+        fullName:
+            nameController.text
+                .trim(),
+        email:
+            emailController.text
+                .trim(),
+        mobile:
+            mobileController.text
+                .trim(),
+        password:
+            passwordController
+                .text,
+        role:
+            role ==
+                    SignupRole
+                        .business
+                ? "business"
+                : "personal",
       );
 
-      // ✅ SUCCESS MESSAGE
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
         const SnackBar(
-          content: Text("Account created successfully 🎉 Please login."),
-          backgroundColor: Colors.green,
+          content: Text(
+              "Account created successfully 🎉"),
+          backgroundColor:
+              Colors.green,
         ),
       );
-
-      await Future.delayed(const Duration(milliseconds: 700));
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.redAccent,
+        MaterialPageRoute(
+          builder: (_) =>
+              const LoginScreen(),
         ),
       );
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        SnackBar(
+          content:
+              Text(e.toString()),
+          backgroundColor:
+              Colors.redAccent,
+        ),
+      );
+
     } finally {
-      setState(() => isLoading = false);
+
+      setState(() =>
+          isLoading = false);
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+      BuildContext context) {
+
     return Scaffold(
+      backgroundColor:
+          const Color(0xFFF5F7FB),
+
       body: Column(
         children: [
-          // 🔷 HEADER (MATCHES LOGIN)
+
+          /// =============================
+          /// 🌈 GRADIENT HEADER
+          /// =============================
           Container(
-            height: 240,
-            width: double.infinity,
-            padding: const EdgeInsets.all(24),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.indigo, Colors.deepPurple],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+            height: 260,
+            width:
+                double.infinity,
+            padding:
+                const EdgeInsets
+                    .all(24),
+            decoration:
+                const BoxDecoration(
+              gradient:
+                  LinearGradient(
+                colors: [
+                  Color(
+                      0xFF4A00E0),
+                  Color(
+                      0xFF8E2DE2),
+                ],
               ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
+              borderRadius:
+                  BorderRadius.only(
+                bottomLeft:
+                    Radius.circular(
+                        32),
+                bottomRight:
+                    Radius.circular(
+                        32),
               ),
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment:
+                  MainAxisAlignment
+                      .center,
               children: const [
+
                 Icon(
-                  Icons.person_add_alt_1_outlined,
+                  Icons
+                      .person_add_alt_1,
                   size: 60,
-                  color: Colors.white,
+                  color:
+                      Colors.white,
                 ),
-                SizedBox(height: 12),
+
+                SizedBox(
+                    height: 12),
+
                 Text(
-                  "Create Your Account",
+                  "Create Account",
                   style: TextStyle(
-                    color: Colors.white,
+                    color:
+                        Colors.white,
                     fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                    fontWeight:
+                        FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 6),
+
+                SizedBox(
+                    height: 6),
+
                 Text(
-                  "Start managing documents smartly",
-                  style: TextStyle(color: Colors.white70),
+                  "Manage documents smartly & securely",
+                  style: TextStyle(
+                      color:
+                          Colors.white70),
                 ),
               ],
             ),
           ),
 
-          // 📝 FORM
+          /// =============================
+          /// FORM
+          /// =============================
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+            child:
+                SingleChildScrollView(
+              padding:
+                  const EdgeInsets
+                      .all(24),
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment
+                          .start,
                   children: [
-                    const Text(
-                      "Basic Information",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
 
-                    TextFormField(
-                      controller: nameController,
+                    /// BASIC INFO
+                    _sectionTitle(
+                        "Basic Information"),
+
+                    const SizedBox(
+                        height: 16),
+
+                    _inputField(
+                      controller:
+                          nameController,
+                      label:
+                          "Full Name",
+                      icon: Icons
+                          .person_outline,
                       validator: (v) =>
-                          v!.isEmpty ? "Full name is required" : null,
-                      decoration: const InputDecoration(
-                        labelText: "Full Name",
-                        prefixIcon: Icon(Icons.person_outline),
-                      ),
+                          v!.isEmpty
+                              ? "Required"
+                              : null,
                     ),
-                    const SizedBox(height: 14),
 
-                    TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
+                    const SizedBox(
+                        height: 14),
+
+                    _inputField(
+                      controller:
+                          emailController,
+                      label:
+                          "Email",
+                      icon: Icons
+                          .email_outlined,
                       validator: (v) {
-                        if (v == null || v.isEmpty) return "Email is required";
-                        if (!v.contains("@")) return "Enter a valid email";
+                        if (v ==
+                                null ||
+                            v.isEmpty)
+                          return "Required";
+                        if (!v
+                            .contains("@"))
+                          return "Invalid email";
                         return null;
                       },
-                      decoration: const InputDecoration(
-                        labelText: "Email",
-                        prefixIcon: Icon(Icons.email_outlined),
-                      ),
                     ),
-                    const SizedBox(height: 14),
 
-                    TextFormField(
-                      controller: mobileController,
-                      keyboardType: TextInputType.phone,
+                    const SizedBox(
+                        height: 14),
+
+                    _inputField(
+                      controller:
+                          mobileController,
+                      label:
+                          "Mobile",
+                      icon: Icons
+                          .phone_outlined,
                       validator: (v) =>
-                          v!.length < 10 ? "Enter valid mobile number" : null,
-                      decoration: const InputDecoration(
-                        labelText: "Mobile Number",
-                        prefixIcon: Icon(Icons.phone_outlined),
-                      ),
+                          v!.length <
+                                  10
+                              ? "Invalid number"
+                              : null,
                     ),
-                    const SizedBox(height: 14),
 
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: obscurePassword,
-                      validator: (v) =>
-                          v!.length < 6 ? "Min 6 characters required" : null,
-                      decoration: InputDecoration(
-                        labelText: "Password",
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            obscurePassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility,
-                          ),
-                          onPressed: () {
+                    const SizedBox(
+                        height: 14),
+
+                    _passwordField(),
+
+                    const SizedBox(
+                        height: 30),
+
+                    /// ACCOUNT TYPE
+                    _sectionTitle(
+                        "Account Type"),
+
+                    const SizedBox(
+                        height: 12),
+
+                    Row(
+                      children: [
+
+                        _roleToggle(
+                          title:
+                              "Personal",
+                          selected:
+                              role ==
+                                  SignupRole
+                                      .personal,
+                          onTap: () {
                             setState(() {
-                              obscurePassword = !obscurePassword;
+                              role =
+                                  SignupRole
+                                      .personal;
                             });
                           },
                         ),
-                      ),
+
+                        const SizedBox(
+                            width: 10),
+
+                        _roleToggle(
+                          title:
+                              "Business",
+                          selected:
+                              role ==
+                                  SignupRole
+                                      .business,
+                          onTap: () {
+                            setState(() {
+                              role =
+                                  SignupRole
+                                      .business;
+                            });
+                          },
+                        ),
+                      ],
                     ),
 
-                    const SizedBox(height: 30),
+                    /// BUSINESS FIELDS
+                    AnimatedSwitcher(
+                      duration:
+                          const Duration(
+                              milliseconds:
+                                  400),
+                      child: role ==
+                              SignupRole
+                                  .business
+                          ? Column(
+                              key:
+                                  const ValueKey(
+                                      1),
+                              children: [
 
-                    const Text(
-                      "Account Type",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                                const SizedBox(
+                                    height:
+                                        20),
+
+                                _sectionTitle(
+                                    "Business Information"),
+
+                                const SizedBox(
+                                    height:
+                                        12),
+
+                                _inputField(
+                                  controller:
+                                      businessNameController,
+                                  label:
+                                      "Business Name",
+                                  icon: Icons
+                                      .business_outlined,
+                                  validator: (v) =>
+                                      v!
+                                              .isEmpty
+                                          ? "Required"
+                                          : null,
+                                ),
+
+                                const SizedBox(
+                                    height:
+                                        12),
+
+                                _inputField(
+                                  controller:
+                                      businessTypeController,
+                                  label:
+                                      "Business Type",
+                                  icon: Icons
+                                      .category_outlined,
+                                  validator: (v) =>
+                                      v!
+                                              .isEmpty
+                                          ? "Required"
+                                          : null,
+                                ),
+
+                                const SizedBox(
+                                    height:
+                                        12),
+
+                                _inputField(
+                                  controller:
+                                      gstController,
+                                  label:
+                                      "GST (Optional)",
+                                  icon: Icons
+                                      .confirmation_number_outlined,
+                                ),
+                              ],
+                            )
+                          : const SizedBox(),
                     ),
 
-                    RadioListTile(
-                      title: const Text("Personal / Family"),
-                      subtitle: const Text("Manage personal documents"),
-                      value: SignupRole.personal,
-                      groupValue: role,
-                      onChanged: (v) => setState(() => role = v!),
-                    ),
-                    RadioListTile(
-                      title: const Text("Business"),
-                      subtitle:
-                          const Text("Manage business compliance documents"),
-                      value: SignupRole.business,
-                      groupValue: role,
-                      onChanged: (v) => setState(() => role = v!),
-                    ),
+                    const SizedBox(
+                        height: 30),
 
-                    if (role == SignupRole.business) ...[
-                      const SizedBox(height: 16),
-                      const Text(
-                        "Business Information",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      TextFormField(
-                        controller: businessNameController,
-                        validator: (v) =>
-                            v!.isEmpty ? "Business name required" : null,
-                        decoration: const InputDecoration(
-                          labelText: "Business Name",
-                          prefixIcon: Icon(Icons.business_outlined),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      TextFormField(
-                        controller: businessTypeController,
-                        validator: (v) =>
-                            v!.isEmpty ? "Business type required" : null,
-                        decoration: const InputDecoration(
-                          labelText: "Business Type",
-                          prefixIcon: Icon(Icons.category_outlined),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      TextFormField(
-                        controller: gstController,
-                        decoration: const InputDecoration(
-                          labelText: "GST Number (optional)",
-                          prefixIcon: Icon(Icons.confirmation_number_outlined),
-                        ),
-                      ),
-                    ],
-
-                    const SizedBox(height: 30),
-
+                    /// CREATE BUTTON
                     SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        onPressed: isLoading ? null : _signup,
+                      width:
+                          double.infinity,
+                      height: 50,
+                      child:
+                          ElevatedButton(
+                        style:
+                            ElevatedButton
+                                .styleFrom(
+                          backgroundColor:
+                              const Color(
+                                  0xFF4A00E0),
+                          shape:
+                              RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(
+                                    16),
+                          ),
+                        ),
+                        onPressed:
+                            isLoading
+                                ? null
+                                : _signup,
                         child: isLoading
                             ? const CircularProgressIndicator(
-                                color: Colors.white,
+                                color:
+                                    Colors.white,
                               )
                             : const Text(
                                 "Create Account",
-                                style: TextStyle(fontSize: 16),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
                               ),
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(
+                        height: 16),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Already have an account? "),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const LoginScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text("Login"),
-                        ),
-                      ],
+                    Center(
+                      child:
+                          TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const LoginScreen(),
+                            ),
+                          );
+                        },
+                        child:
+                            const Text(
+                                "Already have an account? Login"),
+                      ),
                     ),
                   ],
                 ),
@@ -311,6 +465,154 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // =============================
+  // COMPONENTS
+  // =============================
+
+  Widget _sectionTitle(
+      String text) {
+    return Text(
+      text,
+      style:
+          const TextStyle(
+        fontSize: 18,
+        fontWeight:
+            FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _inputField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      validator: validator,
+      decoration:
+          InputDecoration(
+        labelText: label,
+        prefixIcon:
+            Icon(icon),
+        filled: true,
+        fillColor:
+            Colors.grey.shade100,
+        border:
+            OutlineInputBorder(
+          borderRadius:
+              BorderRadius.circular(
+                  14),
+          borderSide:
+              BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _passwordField() {
+    return TextFormField(
+      controller:
+          passwordController,
+      obscureText:
+          obscurePassword,
+      validator: (v) =>
+          v!.length < 6
+              ? "Min 6 characters"
+              : null,
+      decoration:
+          InputDecoration(
+        labelText:
+            "Password",
+        prefixIcon:
+            const Icon(
+                Icons.lock_outline),
+        suffixIcon:
+            IconButton(
+          icon: Icon(
+            obscurePassword
+                ? Icons
+                    .visibility_off
+                : Icons
+                    .visibility,
+          ),
+          onPressed: () {
+            setState(() {
+              obscurePassword =
+                  !obscurePassword;
+            });
+          },
+        ),
+        filled: true,
+        fillColor:
+            Colors.grey.shade100,
+        border:
+            OutlineInputBorder(
+          borderRadius:
+              BorderRadius.circular(
+                  14),
+          borderSide:
+              BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _roleToggle({
+    required String title,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding:
+              const EdgeInsets
+                  .all(14),
+          decoration:
+              BoxDecoration(
+            color: selected
+                ? const Color(
+                    0xFFEDE9FE)
+                : Colors.white,
+            borderRadius:
+                BorderRadius.circular(
+                    14),
+            border:
+                Border.all(
+              color:
+                  selected
+                      ? const Color(
+                          0xFF4A00E0)
+                      : Colors
+                          .grey
+                          .shade300,
+            ),
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style:
+                  TextStyle(
+                fontWeight:
+                    FontWeight
+                        .w600,
+                color:
+                    selected
+                        ? const Color(
+                            0xFF4A00E0)
+                        : Colors
+                            .black87,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
