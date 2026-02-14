@@ -1,11 +1,12 @@
-# Miscellaneous
+############################
+# MISCELLANEOUS
+############################
 *.class
 *.log
 *.pyc
 *.swp
 .DS_Store
 .atom/
-.venv/
 .build/
 .buildlog/
 .history
@@ -14,18 +15,45 @@
 .chroma_langchain_db/
 migrate_working_dir/
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
+############################
+# ENV FILES
+############################
+.env
+.env.local
+.env.*
+!.env.example
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+############################
+# PYTHON (VERY IMPORTANT)
+############################
+venv/
+backend_python/venv/
+__pycache__/
+*.pyo
+*.pyd
+*.sqlite3
+*.db
 
-# Flutter/Dart/Pub related
+############################
+# NODE / EXPRESS
+############################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+############################
+# VECTOR DB / AI FILES
+############################
+chroma/
+*.chroma
+*.index
+*.bin
+*.pt
+
+############################
+# FLUTTER / DART
+############################
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -35,15 +63,38 @@ migrate_working_dir/
 .pub/
 /build/
 
-# Symbolication related
+############################
+# SYMBOL / OBFUSCATION
+############################
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
+############################
+# ANDROID BUILD
+############################
 /android/app/debug
 /android/app/profile
 /android/app/release
-node_modules
-node_modules
+android/.gradle/
+android/app/build/
+
+############################
+# IDE / EDITOR
+############################
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+
+############################
+# CACHE / TEMP
+############################
+.cache/
+temp/
+tmp/
+
+############################
+# UPLOADS
+############################
+uploads/
