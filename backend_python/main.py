@@ -61,7 +61,7 @@ if vector_store._collection.count() == 0:
     vector_store.add_documents(documents)
     print(f"Added {len(documents)} documents ✅")
 else:
-    print(f"DB already contains {vector_store._collection.count()} documents ✅")
+    print(f"DB already contains {vector_store._collection.count()} documents [OK]")
 
 # =========================================================
 # STEP 3: Load Qwen Model (UNCHANGED)

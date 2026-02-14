@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/user_model.dart';
 import '../services/profile_service.dart';
-import 'settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -26,49 +25,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
     loadProfile();
   }
 
+  /// Default empty user
+  UserModel _emptyUser() {
+    return UserModel(
+      name: "",
+      email: "",
+      address: "",
+      village: "",
+      taluka: "",
+      district: "",
+      state: "",
+      country: "",
+      signupDate: "",
+      role: '',
+    );
+  }
+
+  /// Load profile safely
   Future<void> loadProfile() async {
     try {
       String token = "YOUR_JWT_TOKEN";
 
       final result = await ProfileService.fetchProfile(token);
 
+      if (!mounted) return; // ⭐ lifecycle fix
+
       setState(() {
-        user = result ??
-            UserModel(
-              name: "",
-              email: "",
-              address: "",
-              village: "",
-              taluka: "",
-              district: "",
-              state: "",
-              country: "",
-              signupDate: "", role: '',
-            );
+        user = result ?? _emptyUser();
         isLoading = false;
       });
+
     } catch (e) {
-      // If API fails, still show empty UI
+
+      if (!mounted) return; // ⭐ lifecycle fix
+
       setState(() {
-        user = UserModel(
-          name: "",
-          email: "",
-          address: "",
-          village: "",
-          taluka: "",
-          district: "",
-          state: "",
-          country: "",
-          signupDate: "", role: '',
-        );
+        user = _emptyUser();
         isLoading = false;
       });
     }
   }
 
+  /// Pick image safely
   Future<void> _pickImage() async {
-    final picked =
-        await _picker.pickImage(source: ImageSource.gallery);
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (!mounted) return;
 
     if (picked != null) {
       setState(() {
@@ -77,19 +79,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  /// Edit profile sheet
   void _openEditSheet() {
 
-    final nameController =
-        TextEditingController(text: user?.name ?? "");
-    final addressController =
-        TextEditingController(text: user?.address ?? "");
+    final nameController = TextEditingController(text: user?.name ?? "");
+    final addressController = TextEditingController(text: user?.address ?? "");
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(25)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
       builder: (context) {
         return Padding(
@@ -114,10 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const Text(
                   "Edit Profile",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 20),
@@ -138,16 +135,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFF4A00E0),
-                    minimumSize:
-                        const Size(double.infinity, 50),
+                    backgroundColor: const Color(0xFF4A00E0),
+                    minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  onPressed: () async {
+                  onPressed: () {
+
+                    if (!mounted) return;
 
                     setState(() {
                       user = user!.copyWith(
@@ -157,16 +153,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     });
 
                     Navigator.pop(context);
-
-                    // TODO:
-                    // If user exists → update API
-                    // If not → create API
                   },
-                  child: const Text(
-                    "Save Changes",
-                    style:
-                        TextStyle(color: Colors.white),
-                  ),
+                  child: const Text("Save Changes", style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -203,10 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
-        title: const Text(
-          "My Profile",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
+        title: const Text("My Profile", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
       ),
 
       body: isLoading
@@ -221,16 +206,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.black
-                              .withOpacity(0.05),
-                          blurRadius: 8,
-                          offset:
-                              const Offset(0, 4),
-                        ),
+                        BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 4)),
                       ],
                     ),
                     child: Column(
@@ -240,78 +218,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onTap: _pickImage,
                           child: CircleAvatar(
                             radius: 45,
-                            backgroundColor:
-                                const Color(
-                                    0xFFEDE9FE),
-                            backgroundImage:
-                                _selectedImage != null
-                                    ? FileImage(
-                                        _selectedImage!)
-                                    : null,
-                            child:
-                                _selectedImage == null
-                                    ? const Icon(
-                                        Icons.person,
-                                        size: 50,
-                                        color: Color(
-                                            0xFF4A00E0),
-                                      )
-                                    : null,
+                            backgroundColor: const Color(0xFFEDE9FE),
+                            backgroundImage: _selectedImage != null ? FileImage(_selectedImage!) : null,
+                            child: _selectedImage == null
+                                ? const Icon(Icons.person, size: 50, color: Color(0xFF4A00E0))
+                                : null,
                           ),
                         ),
 
                         const SizedBox(height: 12),
 
                         Text(
-                          user?.name.isNotEmpty == true
-                              ? user!.name
-                              : "Add Your Name",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight:
-                                FontWeight.bold,
-                          ),
+                          user?.name.isNotEmpty == true ? user!.name : "Add Your Name",
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                         ),
 
                         Text(
-                          user?.email.isNotEmpty == true
-                              ? user!.email
-                              : "Add Email",
-                          style:
-                              const TextStyle(
-                            color: Colors.grey,
-                          ),
+                          user?.email.isNotEmpty == true ? user!.email : "Add Email",
+                          style: const TextStyle(color: Colors.grey),
                         ),
 
                         const SizedBox(height: 12),
 
                         ElevatedButton.icon(
-                          style:
-                              ElevatedButton
-                                  .styleFrom(
-                            backgroundColor:
-                                const Color(
-                                    0xFF4A00E0),
-                            shape:
-                                RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius
-                                      .circular(
-                                          30),
-                            ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4A00E0),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           ),
-                          icon: const Icon(
-                              Icons.edit,
-                              color:
-                                  Colors.white),
-                          label: const Text(
-                            "Edit Profile",
-                            style: TextStyle(
-                                color:
-                                    Colors.white),
-                          ),
-                          onPressed:
-                              _openEditSheet,
+                          icon: const Icon(Icons.edit, color: Colors.white),
+                          label: const Text("Edit Profile", style: TextStyle(color: Colors.white)),
+                          onPressed: _openEditSheet,
                         ),
                       ],
                     ),
@@ -319,7 +255,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   const SizedBox(height: 20),
 
-                  /// INFO CARD
                   _infoCard(),
                 ],
               ),
@@ -332,36 +267,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(
-            color:
-                Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
         children: [
-          _infoRow("Address",
-              user?.address ?? ""),
+          _infoRow("Address", user?.address ?? ""),
           const Divider(),
-          _infoRow("Village",
-              user?.village ?? ""),
+          _infoRow("Village", user?.village ?? ""),
           const Divider(),
-          _infoRow("Taluka",
-              user?.taluka ?? ""),
+          _infoRow("Taluka", user?.taluka ?? ""),
           const Divider(),
-          _infoRow("District",
-              user?.district ?? ""),
+          _infoRow("District", user?.district ?? ""),
           const Divider(),
-          _infoRow("State",
-              user?.state ?? ""),
+          _infoRow("State", user?.state ?? ""),
           const Divider(),
-          _infoRow("Country",
-              user?.country ?? ""),
+          _infoRow("Country", user?.country ?? ""),
         ],
       ),
     );
@@ -369,21 +292,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _infoRow(String title, String value) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
-          Expanded(
-              child: Text(title,
-                  style: const TextStyle(
-                      color: Colors.grey))),
-          Text(
-            value.isNotEmpty
-                ? value
-                : "Not Added",
-            style: const TextStyle(
-                fontWeight: FontWeight.w600),
-          ),
+          Expanded(child: Text(title, style: const TextStyle(color: Colors.grey))),
+          Text(value.isNotEmpty ? value : "Not Added", style: const TextStyle(fontWeight: FontWeight.w600)),
         ],
       ),
     );

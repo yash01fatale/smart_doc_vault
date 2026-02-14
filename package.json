@@ -18,7 +18,8 @@
   "scripts": {
     "backend": "cd backend && npm start",
     "frontend": "flutter run -d chrome",
-    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "ai": "cd backend_python && venv\\Scripts\\activate && uvicorn main:app --reload --port 8001",
+    "dev": "concurrently \"npm run backend\" \"npm run ai\" \"npm run frontend\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

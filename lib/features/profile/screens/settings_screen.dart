@@ -6,111 +6,68 @@ import '../../../shared/widgets/main_navigation.dart';
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
-  void _switchRole(
-      BuildContext context,
-      UserRole newRole) async {
+  void _switchRole(BuildContext context, UserRole newRole) async {
+    final roleController = Provider.of<RoleController>(context, listen: false);
 
-    final roleController =
-        Provider.of<RoleController>(
-            context,
-            listen: false);
-
-    await roleController
-        .setRole(newRole);
+    await roleController.setRole(newRole);
 
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
-        builder: (_) =>
-            MainNavigation(
-                userRole: newRole),
-      ),
+      MaterialPageRoute(builder: (_) => MainNavigation(userRole: newRole)),
       (route) => false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final roleController = Provider.of<RoleController>(context);
 
-    final roleController =
-        Provider.of<RoleController>(
-            context);
-
-    final currentRole =
-        roleController.role;
+    final currentRole = roleController.role;
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xFFF5F7FB),
+      backgroundColor: const Color(0xFFF5F7FB),
 
       /// 🌈 GRADIENT APPBAR
       appBar: AppBar(
         elevation: 0,
-        flexibleSpace:
-            Container(
-          decoration:
-              const BoxDecoration(
-            gradient:
-                LinearGradient(
-              colors: [
-                Color(
-                    0xFF4A00E0),
-                Color(
-                    0xFF8E2DE2),
-              ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)],
             ),
           ),
         ),
         title: const Text(
           "Settings",
-          style: TextStyle(
-              fontWeight:
-                  FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
 
       body: ListView(
-        padding:
-            const EdgeInsets.all(
-                20),
+        padding: const EdgeInsets.all(20),
         children: [
-
           /// =====================
           /// USAGE TYPE
           /// =====================
-          _sectionTitle(
-              "Usage Type"),
+          _sectionTitle("Usage Type"),
 
           _settingsCard(
             child: ListTile(
-              leading: const Icon(
-                Icons.swap_horiz,
-                color:
-                    Color(0xFF4A00E0),
-              ),
-              title: const Text(
-                  "Switch Usage Type"),
+              leading: const Icon(Icons.swap_horiz, color: Color(0xFF4A00E0)),
+              title: const Text("Switch Usage Type"),
               subtitle: Text(
-                currentRole ==
-                        UserRole.personal
+                currentRole == UserRole.personal
                     ? "Currently: Personal / Family"
                     : "Currently: Business",
               ),
-              trailing: const Icon(
-                Icons
-                    .arrow_forward_ios,
-                size: 16,
-              ),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () {
-                _showSwitchDialog(
-                    context,
-                    currentRole!);
+                _showSwitchDialog(context, currentRole!);
               },
             ),
           ),
 
-          const SizedBox(
-              height: 30),
+          const SizedBox(height: 30),
 
           /// =====================
           /// SECURITY
@@ -120,59 +77,40 @@ class SettingsScreen extends StatelessWidget {
           _settingsCard(
             child: Column(
               children: [
-
                 SwitchListTile(
-                  title: const Text(
-                      "Two-Factor Authentication"),
-                  subtitle:
-                      const Text(
-                          "Extra security during login"),
+                  title: const Text("Two-Factor Authentication"),
+                  subtitle: const Text("Extra security during login"),
                   value: true,
-                  activeThumbColor:
-                      const Color(
-                          0xFF4A00E0),
-                  onChanged:
-                      (_) {},
-                  secondary:
-                      const Icon(
-                    Icons
-                        .verified_user_outlined,
-                    color:
-                        Color(
-                            0xFF4A00E0),
+                  thumbColor: MaterialStateProperty.all(
+                    const Color(0xFF4A00E0),
+                  ),
+                  onChanged: (_) {},
+                  secondary: const Icon(
+                    Icons.verified_user_outlined,
+                    color: Color(0xFF4A00E0),
                   ),
                 ),
 
                 const Divider(),
 
                 SwitchListTile(
-                  title:
-                      const Text(
-                          "App Lock"),
-                  subtitle:
-                      const Text(
-                          "Require PIN or biometric"),
+                  title: const Text("App Lock"),
+                  subtitle: const Text("Require PIN or biometric"),
                   value: false,
-                  activeThumbColor:
-                      const Color(
-                          0xFF4A00E0),
-                  onChanged:
-                      (_) {},
-                  secondary:
-                      const Icon(
-                    Icons
-                        .lock_outline,
-                    color:
-                        Color(
-                            0xFF4A00E0),
+                  thumbColor: MaterialStateProperty.all(
+                    const Color(0xFF4A00E0),
+                  ),
+                  onChanged: (_) {},
+                  secondary: const Icon(
+                    Icons.lock_outline,
+                    color: Color(0xFF4A00E0),
                   ),
                 ),
               ],
             ),
           ),
 
-          const SizedBox(
-              height: 30),
+          const SizedBox(height: 30),
 
           /// =====================
           /// ABOUT
@@ -181,34 +119,22 @@ class SettingsScreen extends StatelessWidget {
 
           _settingsCard(
             child: ListTile(
-              leading: const Icon(
-                Icons.info_outline,
-                color:
-                    Color(0xFF4A00E0),
-              ),
-              title: const Text(
-                  "About Smart Document Vault"),
-              subtitle:
-                  const Text(
-                      "Version 1.0.0"),
+              leading: const Icon(Icons.info_outline, color: Color(0xFF4A00E0)),
+              title: const Text("About Smart Document Vault"),
+              subtitle: const Text("Version 1.0.0"),
               onTap: () {
                 showAboutDialog(
                   context: context,
-                  applicationName:
-                      "Smart Document Vault",
-                  applicationVersion:
-                      "1.0.0",
-                  applicationIcon:
-                      const Icon(
+                  applicationName: "Smart Document Vault",
+                  applicationVersion: "1.0.0",
+                  applicationIcon: const Icon(
                     Icons.folder_open,
-                    color:
-                        Color(
-                            0xFF4A00E0),
+                    color: Color(0xFF4A00E0),
                   ),
                   children: const [
                     Text(
                       "Smart Document Vault helps manage personal and business documents with smart expiry reminders.",
-                    )
+                    ),
                   ],
                 );
               },
@@ -223,103 +149,66 @@ class SettingsScreen extends StatelessWidget {
   // 🔥 COMPONENTS
   // =============================
 
-  Widget _settingsCard({
-    required Widget child,
-  }) {
+  Widget _settingsCard({required Widget child}) {
     return Container(
-      decoration:
-          BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(
-                20),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black
-                .withOpacity(0.05),
-            blurRadius: 10,
-          )
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
         ],
       ),
       child: child,
     );
   }
 
-  Widget _sectionTitle(
-      String title) {
+  Widget _sectionTitle(String title) {
     return Padding(
-      padding:
-          const EdgeInsets.only(
-              bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight:
-              FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  void _showSwitchDialog(
-      BuildContext context,
-      UserRole currentRole) {
-
+  void _showSwitchDialog(BuildContext context, UserRole currentRole) {
     showDialog(
       context: context,
-      builder: (_) =>
-          AlertDialog(
-        shape:
-            RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(
-                  20),
-        ),
-        title: const Text(
-            "Switch Usage Type"),
-        content: const Text(
-          "Your dashboard and document categories will change based on the selected usage type.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () =>
-                Navigator.pop(
-                    context),
-            child:
-                const Text("Cancel"),
-          ),
-          ElevatedButton(
-            style: ElevatedButton
-                .styleFrom(
-              backgroundColor:
-                  const Color(
-                      0xFF4A00E0),
+      builder:
+          (_) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-            onPressed: () {
-              Navigator.pop(
-                  context);
-              _switchRole(
-                context,
-                currentRole ==
-                        UserRole
-                            .personal
-                    ? UserRole
-                        .business
-                    : UserRole
-                        .personal,
-              );
-            },
-            child:
-                const Text(
-              "Switch",
-              style: TextStyle(
-                  color:
-                      Colors.white),
+            title: const Text("Switch Usage Type"),
+            content: const Text(
+              "Your dashboard and document categories will change based on the selected usage type.",
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4A00E0),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  _switchRole(
+                    context,
+                    currentRole == UserRole.personal
+                        ? UserRole.business
+                        : UserRole.personal,
+                  );
+                },
+                child: const Text(
+                  "Switch",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }
