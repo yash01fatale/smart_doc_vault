@@ -26,7 +26,9 @@ class _ForgotPasswordScreenState
 
     if (!_formKey
         .currentState!
-        .validate()) return;
+        .validate()) {
+      return;
+    }
 
     setState(() =>
         isLoading = true);
@@ -194,11 +196,13 @@ class _ForgotPasswordScreenState
             validator: (v) {
               if (v ==
                       null ||
-                  v.isEmpty)
+                  v.isEmpty) {
                 return "Email required";
+              }
               if (!v
-                  .contains("@"))
+                  .contains("@")) {
                 return "Invalid email";
+              }
               return null;
             },
             decoration:

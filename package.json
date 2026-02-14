@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "axios": "^1.13.5",
+    "mongoose": "^9.2.1",
     "nodemailer": "^8.0.1"
   },
   "name": "smart_doc_vault",
@@ -14,12 +16,9 @@
     "concurrently": "^9.2.1"
   },
   "scripts": {
-    
-  "backend": "cd backend && npm start",
-  "frontend": "flutter run -d chrome",
-  "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
-
-
+    "backend": "cd backend && npm start",
+    "frontend": "flutter run -d chrome",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

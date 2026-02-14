@@ -5,6 +5,8 @@ require("dotenv").config();
 
 const app = express();
 
+const aiRoutes = require("./routes/aiRoutes");
+
 // CORS FIX FOR FLUTTER WEB
 app.use(cors({
   origin: "*",
@@ -15,6 +17,7 @@ app.use(cors({
 app.use(express.json());
 
 // ROUTES
+app.use("/api/ai", aiRoutes);
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/documents", require("./routes/documentRoutes"));
 

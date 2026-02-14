@@ -44,7 +44,9 @@ class _SignupScreenState
 
     if (!_formKey
         .currentState!
-        .validate()) return;
+        .validate()) {
+      return;
+    }
 
     setState(() =>
         isLoading = true);
@@ -242,11 +244,13 @@ class _SignupScreenState
                       validator: (v) {
                         if (v ==
                                 null ||
-                            v.isEmpty)
+                            v.isEmpty) {
                           return "Required";
+                        }
                         if (!v
-                            .contains("@"))
+                            .contains("@")) {
                           return "Invalid email";
+                        }
                         return null;
                       },
                     ),

@@ -53,6 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     final pages = [
       _homePage(),
@@ -205,7 +206,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               final daysLeft = expiry.difference(DateTime.now()).inDays;
 
               return _recentDocumentCard(doc, expiry, daysLeft);
-            }).toList(),
+            }),
           ],
         ),
       ),

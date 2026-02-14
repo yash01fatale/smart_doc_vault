@@ -1,6 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import '../../../core/utils/role_controller.dart';
+
+/// ⚠ IMPORTANT:
+/// Android Emulator → 10.0.2.2
+/// Real Device → Use your PC local IP
+final Uri url = Uri.parse("http://127.0.0.1:8000/api/ai/ask");
+
 
 class AIAssistantScreen extends StatefulWidget {
   const AIAssistantScreen({super.key});
@@ -35,11 +43,11 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     });
   }
 
-  void _sendMessage(String text) {
+  // ==============================
+  // 🔥 SEND MESSAGE
+  // ==============================
+  Future<void> _sendMessage(String text) async {
     if (text.trim().isEmpty) return;
-
-    final role =
-        Provider.of<RoleController>(context, listen: false).role;
 
     setState(() {
       messages.add({"role": "user", "text": text});
@@ -49,33 +57,70 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     _controller.clear();
     _scrollToBottom();
 
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        isTyping = false;
-        messages.add({
-          "role": "ai",
-          "text": _getAIResponse(text, role),
-        });
-      });
-      _scrollToBottom();
+    await _callAIBackend(text);
+
+    setState(() {
+      isTyping = false;
     });
+
+    _scrollToBottom();
   }
 
-  String _getAIResponse(String query, UserRole? role) {
-    if (role == UserRole.business) {
-      return "📊 Analysis:\n\n• GST expiring soon\n• Shop Act valid\n\n⚠ Renew early to avoid penalties.\n\nNeed full compliance steps?";
-    } else {
-      return "📄 Analysis:\n\n• Passport expiring soon\n• Aadhaar & PAN valid\n\n🕒 Start renewal process early.\n\nWant step-by-step guide?";
+  // ==============================
+  // 🔥 CALL BACKEND API
+  // ==============================
+  Future<void> _callAIBackend(String question) async {
+    try {
+      final role =
+          Provider.of<RoleController>(context, listen: false).role;
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "question": question,
+          "role": role.toString(), // optional: send role to backend
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        setState(() {
+          messages.add({
+            "role": "ai",
+            "text": data["answer"] ?? "No response from AI",
+          });
+        });
+      } else {
+        setState(() {
+          messages.add({
+            "role": "ai",
+            "text": "⚠ Server error. Please try again.",
+          });
+        });
+      }
+    } catch (e) {
+      setState(() {
+        messages.add({
+          "role": "ai",
+          "text": "⚠ Unable to connect to server.",
+        });
+      });
     }
   }
 
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 200), () {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeOut,
-      );
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
@@ -107,7 +152,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
               role == UserRole.business
                   ? "Business AI"
                   : "Personal AI",
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ],
         ),
@@ -116,7 +162,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       body: Column(
         children: [
 
-          /// CHAT AREA
+          // ================= CHAT AREA =================
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
@@ -136,10 +182,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
             ),
           ),
 
-          /// QUICK PROMPTS
           _quickPromptSection(role),
-
-          /// INPUT BAR
           _inputBar(),
         ],
       ),
@@ -239,7 +282,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                 ),
               ),
             ),
-          ),
+            ),
           const SizedBox(width: 8),
           CircleAvatar(
             backgroundColor: const Color(0xFF4A00E0),

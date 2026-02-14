@@ -128,7 +128,7 @@ class SettingsScreen extends StatelessWidget {
                       const Text(
                           "Extra security during login"),
                   value: true,
-                  activeColor:
+                  activeThumbColor:
                       const Color(
                           0xFF4A00E0),
                   onChanged:
@@ -153,7 +153,7 @@ class SettingsScreen extends StatelessWidget {
                       const Text(
                           "Require PIN or biometric"),
                   value: false,
-                  activeColor:
+                  activeThumbColor:
                       const Color(
                           0xFF4A00E0),
                   onChanged:

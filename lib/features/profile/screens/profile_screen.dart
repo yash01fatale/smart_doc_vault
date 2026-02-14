@@ -263,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 12),
 
                         Text(
-                          user?.name?.isNotEmpty == true
+                          user?.name.isNotEmpty == true
                               ? user!.name
                               : "Add Your Name",
                           style: const TextStyle(
@@ -274,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
 
                         Text(
-                          user?.email?.isNotEmpty == true
+                          user?.email.isNotEmpty == true
                               ? user!.email
                               : "Add Email",
                           style:

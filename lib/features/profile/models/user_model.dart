@@ -38,5 +38,7 @@ class UserModel {
     );
   }
 
-  UserModel? copyWith({required String name, required String address}) {}
+  UserModel? copyWith({required String name, required String address}) {
+    return null;
+  }
 }
